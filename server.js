@@ -42,6 +42,7 @@ app.get("/orders/:id", (req, res) => {
 // Crear pedido
 app.post("/orders", (req, res) => {
   const { usuario, productos: idsProductos } = req.body;
+
   if (!usuario || !idsProductos || idsProductos.length === 0) {
     return res.status(400).json({ error: "Campos requeridos faltantes" });
   }
@@ -52,19 +53,25 @@ app.post("/orders", (req, res) => {
     return res.status(404).json({ error: "Algunos productos no existen" });
   }
 
+
   const total = productosSeleccionados.reduce((suma, p) => suma + p.precio, 0);
 
+  
   const nuevoPedido = {
     id: orders.length + 1,
     usuario,
-    productos: idsProductos,
+    productos: productosSeleccionados, 
     total
   };
 
   orders.push(nuevoPedido);
 
-  res.status(201).json({ mensaje: "Pedido creado exitosamente", data: nuevoPedido });
+  res.status(201).json({
+    mensaje: "Pedido creado exitosamente",
+    data: nuevoPedido
+  });
 });
+
 
 // Actualizar Pedido
 app.put("/orders/:id", (req, res) => {
